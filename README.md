@@ -1,0 +1,1 @@
+springboot集成shiro和redis的权限系统，单点登录
