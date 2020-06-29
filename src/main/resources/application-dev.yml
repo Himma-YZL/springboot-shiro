@@ -106,3 +106,10 @@ swagger:
   #controller包位置
   base-package: com.bgy.phoenixtree.cms.controller
   host: localhost:${server.port}
+  #不屏蔽资源，值为true时屏蔽所有资源
+  production: false
+  #登录校验
+  basic:
+    enable: true
+    username: root
+    password: 123456
