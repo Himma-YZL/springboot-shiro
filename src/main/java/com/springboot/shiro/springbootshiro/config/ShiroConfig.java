@@ -1,6 +1,7 @@
 package com.springboot.shiro.springbootshiro.config;
 
 import com.springboot.shiro.springbootshiro.shiro.realm.CustomRealm;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -34,6 +35,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/v2/**", "anon");
         filterChainDefinitionMap.put("/webjars/**", "anon");
 
+        //登录校验
         filterChainDefinitionMap.put("/login", "authc");
 
         //主要这行代码必须放在所有权限设置的最后，不然会导致所有 url 都被拦截 剩余的都需要认证
@@ -52,6 +54,9 @@ public class ShiroConfig {
     @Bean
     public CustomRealm customRealm() {
         CustomRealm customRealm = new CustomRealm();
+        // 告诉realm,使用credentialsMatcher加密算法类来验证密文
+        customRealm.setCredentialsMatcher(hashedCredentialsMatcher());
+        customRealm.setCachingEnabled(false);
         return customRealm;
     }
 
@@ -81,6 +86,22 @@ public class ShiroConfig {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager());
         return authorizationAttributeSourceAdvisor;
+    }
+
+    /**
+     * 加密算法
+     * @return
+     */
+    @Bean(name = "credentialsMatcher")
+    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
+        // 散列算法:这里使用MD5算法;
+        hashedCredentialsMatcher.setHashAlgorithmName("MD5");
+        // 散列的次数，比如散列两次，相当于 md5(md5("")),必须跟注册时加密的迭代次数一致
+        hashedCredentialsMatcher.setHashIterations(9);
+        // storedCredentialsHexEncoded默认是true，此时用的是密码加密用的是Hex编码；false时用Base64编码
+        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
+        return hashedCredentialsMatcher;
     }
 
 }

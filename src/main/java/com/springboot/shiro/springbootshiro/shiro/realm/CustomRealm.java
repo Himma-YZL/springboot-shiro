@@ -4,14 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.springboot.shiro.springbootshiro.shiro.entity.Permission;
 import com.springboot.shiro.springbootshiro.shiro.entity.Role;
 import com.springboot.shiro.springbootshiro.shiro.entity.User;
-import com.springboot.shiro.springbootshiro.shiro.entity.UserRole;
-import com.springboot.shiro.springbootshiro.shiro.service.IRolePermissionService;
-import com.springboot.shiro.springbootshiro.shiro.service.IUserRoleService;
 import com.springboot.shiro.springbootshiro.shiro.service.IUserService;
 import com.springboot.shiro.springbootshiro.shiro.service.impl.PermissionServiceImpl;
 import com.springboot.shiro.springbootshiro.shiro.service.impl.RoleServiceImpl;
-import freemarker.template.utility.StringUtil;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -20,6 +15,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
@@ -58,19 +54,12 @@ public class CustomRealm extends AuthorizingRealm {
             }
         }
         return simpleAuthorizationInfo;
-//        String username = (String) SecurityUtils.getSubject().getPrincipal();
-//        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-//        Set<String> stringSet = new HashSet<>();
-//        stringSet.add("user:show");
-//        stringSet.add("user:admin");
-//        info.setStringPermissions(stringSet);
-//        return info;
-//        return null;
     }
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         String userName = (String) authenticationToken.getPrincipal();
+        //密码要用new String((char[]) ...)接收，强转String报错
         String password = new String((char[]) authenticationToken.getCredentials());
         if (StringUtils.isEmpty(userName) || "null".equals(userName)){
             throw new AuthenticationException("用户名错误");
@@ -80,11 +69,13 @@ public class CustomRealm extends AuthorizingRealm {
             QueryWrapper queryWrapper = new QueryWrapper();
             queryWrapper.eq("user_name",userName);
             User user = userService.getOne(queryWrapper);
-            if (password.equals(user.getPassword())){
-                return new SimpleAuthenticationInfo(userName, password,getName());
-            }else {
-                throw new AuthenticationException("密码错误");
-            }
+            SimpleAuthenticationInfo simpleAuthenticationInfo =  new SimpleAuthenticationInfo(userName, user.getPassword(), ByteSource.Util.bytes(userName + "salt"),getName());
+            return simpleAuthenticationInfo;
+//            if (password.equals(user.getPassword())){
+//                return new SimpleAuthenticationInfo(userName, password, ByteSource.Util.bytes(userName + "salt"),getName());
+//            }else {
+//                throw new AuthenticationException("密码错误");
+//            }
         }
     }
 }

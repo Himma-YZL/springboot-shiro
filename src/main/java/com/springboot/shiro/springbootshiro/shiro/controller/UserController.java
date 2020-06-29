@@ -3,6 +3,7 @@ package com.springboot.shiro.springbootshiro.shiro.controller;
 
 import com.springboot.shiro.springbootshiro.shiro.entity.User;
 import com.springboot.shiro.springbootshiro.shiro.service.IUserService;
+import com.springboot.shiro.springbootshiro.util.EncryptUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -34,6 +35,9 @@ public class UserController {
     @PostMapping("/addUser")
     @ApiOperation(value = "新增/注册用户")
     public String addUser(User user){
+        //注册密码加密
+        String password = EncryptUtil.md5Password(user.getUserName(),user.getPassword());
+        user.setPassword(password);
         boolean result = userService.save(user);
         if (result){
             return "新增成功";
@@ -42,7 +46,7 @@ public class UserController {
         }
     }
 
-    @RequiresPermissions("user-add")
+    @RequiresPermissions("add")
     @GetMapping("/getUserPermission")
     @ApiOperation(value = "校验用户是否有user-add权限接口")
     public String getUserPermission(){

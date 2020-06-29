@@ -88,6 +88,20 @@ spring:
     testOnBorrow: true
     #在空闲时检查有效性, 默认false
     testWhileIdle: true
+
+  #热部署--静态资源立即生效
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    mode: LEGACYHTML5
+    prefix: classpath:/templates/
+    suffix: .html
+    check-template-location: true
+  #热部署生效
+  devtools:
+    restart:
+      enabled: true
+
 # 日志配置
 logging:
   config: classpath:logback-spring.xml
