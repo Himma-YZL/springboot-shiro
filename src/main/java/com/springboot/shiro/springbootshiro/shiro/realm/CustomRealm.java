@@ -70,6 +70,8 @@ public class CustomRealm extends AuthorizingRealm {
             queryWrapper.eq("user_name",userName);
             User user = userService.getOne(queryWrapper);
             SimpleAuthenticationInfo simpleAuthenticationInfo =  new SimpleAuthenticationInfo(userName, user.getPassword(), ByteSource.Util.bytes(userName + "salt"),getName());
+            //验证成功开始踢人(清除缓存和Session)
+//            ShiroUtil.deleteCache(user.getUserName(),true);
             return simpleAuthenticationInfo;
 //            if (password.equals(user.getPassword())){
 //                return new SimpleAuthenticationInfo(userName, password, ByteSource.Util.bytes(userName + "salt"),getName());

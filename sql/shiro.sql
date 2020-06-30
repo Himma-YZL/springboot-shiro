@@ -11,7 +11,7 @@
  Target Server Version : 50727
  File Encoding         : 65001
 
- Date: 28/06/2020 11:12:23
+ Date: 30/06/2020 09:56:28
 */
 
 SET NAMES utf8mb4;
@@ -91,8 +91,8 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1277058852419833857, 'user', 'user');
-INSERT INTO `user` VALUES (1277059004341719041, 'admin', 'admin');
+INSERT INTO `user` VALUES (1277058852419833857, 'user', 'dbcb74a47c04a2c7373d2448f6783209');
+INSERT INTO `user` VALUES (1277059004341719041, 'admin', 'f901eb3293e91e409b10d9ab98c1c380');
 
 -- ----------------------------
 -- Table structure for user_role

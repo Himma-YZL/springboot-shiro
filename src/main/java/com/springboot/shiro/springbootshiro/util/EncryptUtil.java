@@ -7,6 +7,8 @@ public class EncryptUtil {
 
     private static int hashIterations = 9;
 
+
+
     /**
      * MD5加密
      * @param userName

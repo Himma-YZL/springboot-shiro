@@ -88,6 +88,8 @@ spring:
     testOnBorrow: true
     #在空闲时检查有效性, 默认false
     testWhileIdle: true
+    #
+    timeout: 6000
 
   #热部署--静态资源立即生效
   thymeleaf:
@@ -127,3 +129,6 @@ swagger:
     enable: true
     username: root
     password: 123456
+
+redis:
+  host: ${spring.redis.host}:${spring.redis.port}
