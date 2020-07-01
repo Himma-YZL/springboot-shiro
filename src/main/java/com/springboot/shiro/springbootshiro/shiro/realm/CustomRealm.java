@@ -7,19 +7,18 @@ import com.springboot.shiro.springbootshiro.shiro.entity.User;
 import com.springboot.shiro.springbootshiro.shiro.service.IUserService;
 import com.springboot.shiro.springbootshiro.shiro.service.impl.PermissionServiceImpl;
 import com.springboot.shiro.springbootshiro.shiro.service.impl.RoleServiceImpl;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class CustomRealm extends AuthorizingRealm {
 
@@ -34,16 +33,15 @@ public class CustomRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        //获取登录用户名
-        String userName = (String) principalCollection.getPrimaryPrincipal();
+        //获取登录用户
+        User user = (User) principalCollection.getPrimaryPrincipal();
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        //根据用户名去数据库查询用户信息
-        if (StringUtils.isEmpty(userName) || "null".equals(userName.toLowerCase())){
+        if (user == null){
             return simpleAuthorizationInfo;
         }
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("user_name",userName);
-        User user = userService.getOne(queryWrapper);
+//        QueryWrapper queryWrapper = new QueryWrapper();
+//        queryWrapper.eq("user_name",user.getUserName());
+//        User user = userService.getOne(queryWrapper);
         List<Role> roleList = roleService.getRolesByUserId(user.getId());
         //添加角色和权限
         for (Role role : roleList){
@@ -69,15 +67,15 @@ public class CustomRealm extends AuthorizingRealm {
             QueryWrapper queryWrapper = new QueryWrapper();
             queryWrapper.eq("user_name",userName);
             User user = userService.getOne(queryWrapper);
-            SimpleAuthenticationInfo simpleAuthenticationInfo =  new SimpleAuthenticationInfo(userName, user.getPassword(), ByteSource.Util.bytes(userName + "salt"),getName());
+            if (user == null){
+                throw new UnknownAccountException("用户不存在");
+            }
+            //传入用户信息
+            SimpleAuthenticationInfo simpleAuthenticationInfo =  new SimpleAuthenticationInfo(user, user.getPassword(), ByteSource.Util.bytes(userName + "salt"),getName());
+
             //验证成功开始踢人(清除缓存和Session)
 //            ShiroUtil.deleteCache(user.getUserName(),true);
             return simpleAuthenticationInfo;
-//            if (password.equals(user.getPassword())){
-//                return new SimpleAuthenticationInfo(userName, password, ByteSource.Util.bytes(userName + "salt"),getName());
-//            }else {
-//                throw new AuthenticationException("密码错误");
-//            }
         }
     }
 }

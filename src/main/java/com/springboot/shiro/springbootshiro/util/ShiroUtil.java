@@ -38,6 +38,7 @@ public class ShiroUtil {
      * 获取当前用户信息
      */
     public static User getUserInfo() {
+        Object principal = SecurityUtils.getSubject().getPrincipal();
         return (User) SecurityUtils.getSubject().getPrincipal();
     }
 

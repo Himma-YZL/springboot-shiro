@@ -31,9 +31,9 @@ public class GoblaException {
         return "/403";
     }
 
-    @ExceptionHandler(Exception.class)
-    public String exception(){
-        log.info("系统异常");
-        return "500";
-    }
+//    @ExceptionHandler(Exception.class)
+//    public String exception(){
+//        log.info("系统异常");
+//        return "500";
+//    }
 }

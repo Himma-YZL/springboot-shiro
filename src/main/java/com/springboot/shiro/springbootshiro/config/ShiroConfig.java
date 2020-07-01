@@ -47,13 +47,13 @@ public class ShiroConfig {
      * @param timeout
      * @param password
      */
-    @Bean
-    public String redisValue(@Value("${redis.host}") String host,@Value("${spring.redis.timeout}") int timeout,@Value("${spring.redis.password}") String password){
-        this.host = host;
-        this.timeout = timeout;
-        this.password = password;
-        return null;
-    }
+//    @Bean
+//    public String redisValue(@Value("${redis.host}") String host,@Value("${spring.redis.timeout}") int timeout,@Value("${spring.redis.password}") String password){
+//        this.host = host;
+//        this.timeout = timeout;
+//        this.password = password;
+//        return null;
+//    }
 
     @Bean(name = "shiroFilter")
     public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager){
@@ -154,13 +154,13 @@ public class ShiroConfig {
     @Bean
     public RedisManager redisManager() {
         RedisManager redisManager = new RedisManager();
-        redisManager.setHost(host);
-//        redisManager.setHost("127.0.0.1:6379");
+//        redisManager.setHost(host);
+        redisManager.setHost("127.0.0.1:6379");
         //shiro-redis 3.2.3版本没有这个属性
 //        redisManager.setPort(port);
-        redisManager.setTimeout(timeout);
-        redisManager.setPassword(password);
-//        redisManager.setPassword("123456");
+//        redisManager.setTimeout(timeout);
+//        redisManager.setPassword(password);
+        redisManager.setPassword("123456");
         return redisManager;
     }
 
