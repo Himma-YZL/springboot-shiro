@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,37 +28,24 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
-    private final String CACHE_KEY = "shiro:cache:";
-    private final String SESSION_KEY = "shiro:session:";
+    private final String CACHE_KEY = "shirotest:cache:";
+    private final String SESSION_KEY = "shirotest:session:";
     private final int EXPIRE = 1800;
 
     //Redis配置
-//    @Value("${redis.host}")
+    @Value("${redis.host}")
     private String host;
 //    @Value("${spring.redis.port}")
 //    private int port;
-//    @Value("${spring.redis.timeout}")
+    @Value("${spring.redis.timeout}")
     private int timeout;
-//    @Value("${spring.redis.password}")
+    @Value("${spring.redis.password}")
     private String password;
 
-    /**
-     * @Bean运行比@Value快，在Bean中使用上面的@value获取值为空，所以新建个Bean赋值
-     * @param host
-     * @param timeout
-     * @param password
-     */
-//    @Bean
-//    public String redisValue(@Value("${redis.host}") String host,@Value("${spring.redis.timeout}") int timeout,@Value("${spring.redis.password}") String password){
-//        this.host = host;
-//        this.timeout = timeout;
-//        this.password = password;
-//        return null;
-//    }
 
     @Bean(name = "shiroFilter")
     public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager){
-//        log.info("------------------{}---------------------", host);
+        log.info("------------------{}---------------------", host);
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         shiroFilterFactoryBean.setLoginUrl("/login");
@@ -104,8 +92,13 @@ public class ShiroConfig {
     }
 
     //--------------------------------------------------------------------开启shiro注解--------------------------------------------------------------------------------
+
+    /**
+     * 该方法必须为静态，不然@Value获取不到application.yml文件的值
+     * @return
+     */
     @Bean
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+    public static LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
 
@@ -125,9 +118,9 @@ public class ShiroConfig {
     }
 
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
-        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager());
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
 
@@ -154,13 +147,11 @@ public class ShiroConfig {
     @Bean
     public RedisManager redisManager() {
         RedisManager redisManager = new RedisManager();
-//        redisManager.setHost(host);
-        redisManager.setHost("127.0.0.1:6379");
+        redisManager.setHost(host);
         //shiro-redis 3.2.3版本没有这个属性
 //        redisManager.setPort(port);
-//        redisManager.setTimeout(timeout);
-//        redisManager.setPassword(password);
-        redisManager.setPassword("123456");
+        redisManager.setTimeout(timeout);
+        redisManager.setPassword(password);
         return redisManager;
     }
 

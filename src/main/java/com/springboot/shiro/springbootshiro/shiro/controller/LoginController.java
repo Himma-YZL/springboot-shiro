@@ -36,22 +36,22 @@ public class LoginController {
         JSONObject jsonObject = new JSONObject();
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(userName,password);
-        String newSessionId = ShiroUtil.getSession().getId().toString();
-//        String newToken = ShiroUtil.getSession().getAttribute("token").toString();
-        Object o = redisTemplate.opsForValue().get(userName);
-        if (o!=null){
-            String oldToken = (String) o;
-            if (oldToken.equals(newSessionId)){
-                String sessionId = ShiroUtil.getSession().getId().toString();
-                User userInfo = ShiroUtil.getUserInfo();
-                jsonObject.put("flag","SUCCESS");
-                jsonObject.put("status","200");
-                jsonObject.put("MSG","登录成功");
-                jsonObject.put("SESSIONID",sessionId);
-                jsonObject.put("USERINFO",userInfo);
-                return jsonObject;
-            }
-        }
+//        String newSessionId = ShiroUtil.getSession().getId().toString();
+////        String newToken = ShiroUtil.getSession().getAttribute("token").toString();
+//        Object o = redisTemplate.opsForValue().get(userName);
+//        if (o!=null){
+//            String oldToken = (String) o;
+//            if (oldToken.equals(newSessionId)){
+//                String sessionId = ShiroUtil.getSession().getId().toString();
+//                User userInfo = ShiroUtil.getUserInfo();
+//                jsonObject.put("flag","SUCCESS");
+//                jsonObject.put("status","200");
+//                jsonObject.put("MSG","登录成功");
+//                jsonObject.put("SESSIONID",sessionId);
+//                jsonObject.put("USERINFO",userInfo);
+//                return jsonObject;
+//            }
+//        }
         try {
 //            String sessionId = ShiroUtil.getSession().getId().toString();
 //            User userInfo = ShiroUtil.getUserInfo();
