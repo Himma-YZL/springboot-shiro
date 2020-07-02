@@ -87,7 +87,8 @@ public class ShiroConfig {
         CustomRealm customRealm = new CustomRealm();
         // 告诉realm,使用credentialsMatcher加密算法类来验证密文
         customRealm.setCredentialsMatcher(hashedCredentialsMatcher());
-        customRealm.setCachingEnabled(false);
+        //是否开启缓存，默认开启（设置为false时，角色和权限信息无法缓存）
+//        customRealm.setCachingEnabled(false);
         return customRealm;
     }
 
@@ -166,8 +167,8 @@ public class ShiroConfig {
         redisCacheManager.setRedisManager(redisManager());
         //默认是"shiro:cache:"
         redisCacheManager.setKeyPrefix(CACHE_KEY);
-        // 配置缓存的话要求放在session里面的实体类必须有个id标识
-        redisCacheManager.setPrincipalIdFieldName("userId");
+        // 配置缓存的话要求放在session里面的实体类必须有个id标识，这填用户实体类的id
+        redisCacheManager.setPrincipalIdFieldName("id");
         return redisCacheManager;
     }
 
